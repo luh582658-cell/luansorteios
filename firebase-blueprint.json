@@ -1,0 +1,147 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A user of the raffle system",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "user"] },
+        "avatar": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "role"]
+    },
+    "Raffle": {
+      "title": "Raffle",
+      "description": "A raffle campaign",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "price": { "type": "number" },
+        "totalTickets": { "type": "number" },
+        "soldTickets": { "type": "number" },
+        "image": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "finished", "draft"] },
+        "category": { "type": "string" },
+        "cost": { "type": "number" },
+        "drawDate": { "type": "string", "format": "date-time" },
+        "winnerTicket": { "type": "number" },
+        "winnerUser": { "type": "string" },
+        "winningTickets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "number": { "type": "number" },
+              "prize": { "type": "string" }
+            }
+          }
+        },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "price", "totalTickets", "status"]
+    },
+    "Ticket": {
+      "title": "Ticket",
+      "description": "A purchased or reserved ticket",
+      "type": "object",
+      "properties": {
+        "raffleId": { "type": "string" },
+        "number": { "type": "number" },
+        "userId": { "type": "string" },
+        "status": { "type": "string", "enum": ["reserved", "paid"] },
+        "paymentId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["raffleId", "number", "userId", "status"]
+    },
+    "Payment": {
+      "title": "Payment",
+      "description": "A payment for tickets",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "raffleId": { "type": "string" },
+        "amount": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "mpPaymentId": { "type": "string" },
+        "ticketNumbers": { "type": "array", "items": { "type": "number" } },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "raffleId", "amount", "status", "ticketNumbers"]
+    },
+    "Winner": {
+      "title": "Winner",
+      "description": "A past winner record",
+      "type": "object",
+      "properties": {
+        "raffleId": { "type": "string" },
+        "raffleTitle": { "type": "string" },
+        "userName": { "type": "string" },
+        "userPhoto": { "type": "string" },
+        "ticketNumber": { "type": "number" },
+        "prize": { "type": "string" },
+        "testimonial": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["raffleId", "userName", "ticketNumber"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "A notification for a user",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "type": { "type": "string", "enum": ["winner", "info"] },
+        "read": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "title", "message", "type", "read", "createdAt"]
+    },
+    "settings": {
+      "title": "Configurações",
+      "description": "Configurações globais do sistema.",
+      "type": "object",
+      "properties": {
+        "mercadoPagoImage": { "type": "string", "description": "URL da imagem do Mercado Pago." },
+        "heroBadgeImage": { "type": "string", "description": "URL da imagem de destaque (Prêmios Incríveis)." },
+        "howItWorksText": { "type": "string", "description": "Texto explicativo do pop-up Como Funciona." }
+      }
+    }
+  },
+  "firestore": {
+    "/settings/{settingId}": {
+      "schema": "settings",
+      "description": "Configurações globais."
+    },
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profiles"
+    },
+    "/raffles/{raffleId}": {
+      "schema": { "$ref": "#/entities/Raffle" },
+      "description": "Raffles"
+    },
+    "/tickets/{ticketId}": {
+      "schema": { "$ref": "#/entities/Ticket" },
+      "description": "Tickets"
+    },
+    "/payments/{paymentId}": {
+      "schema": { "$ref": "#/entities/Payment" },
+      "description": "Payments"
+    },
+    "/winners/{winnerId}": {
+      "schema": { "$ref": "#/entities/Winner" },
+      "description": "Winners gallery"
+    },
+    "/notifications/{notificationId}": {
+      "schema": { "$ref": "#/entities/Notification" },
+      "description": "User notifications"
+    }
+  }
+}
